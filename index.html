@@ -1,0 +1,943 @@
+<!--
+Google IO 2012/2013 HTML5 Slide Template
+
+Authors: Eric Bidelman <ebidel@gmail.com>
+         Luke Mahé <lukem@google.com>
+
+URL: https://code.google.com/p/io-2012-slides
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+</head>
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+    <aside class="gdbar"><img src="images/fosdem-gear.png"></aside>
+    <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>$whoami</h2>
+      <h3>Moritz Fischer</h3>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Embedded Software Engineer @ National Instruments</li>
+        <li>Work on the USRP </li>
+        <li>Very small team, focus on open-source</li>
+        <li>Try to work upstream first (U-Boot, Kernel, ...) </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/fosdem-gear.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Brief Intro to Chromebooks</h2>
+      <h3>Just another laptop?<h3>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <hgroup>
+    <h2>Chromebook</h2>
+    <h3>What's so special?</h3>
+    </hgroup>
+    <article class="smaller">
+      <div class="columns-2">
+        <img src="images/chromebook.jpg" class="reflect" alt="Description" title="Description" width=100%>
+        <ul>
+            <li>x86_64 (Intel), ARMv7 (exynos 5, rk3288c, ...), ARMv8 (rk3399) </li>
+            <li>Linux Kernel (old, but maintained)</li>
+            <li>Userland derived from Gentoo</li>
+            <li>Made to run Google Chrome & Google Apps </li>
+            <li>Very limited local storage </li>
+            <li>Strong focus on security, verified boot</li>
+        </ul>
+      </div>
+
+      <footer class="source">source: lenovo.com</footer>
+    </article>
+  </slide>
+
+  <slide>
+  <hgroup>
+  <h2>Chromebook Embedded Controller </h2>
+  <h3>What's that? </h3>
+  </hgroup>
+    <article class="smaller">
+      <div class="columns-2">
+        <img src="images/smsc.jpg" class="reflect" alt="Description" title="Description" width=100%>
+        <ul>
+          <li>PCB here: Asus C202 (terra/strago)</li>
+          <li>AP: (red) Intel Celeron CPU (Braswell) </li>
+          <li>EC MCU (green) <b>SMSC MEC1322-LZY</b> </li>
+          <li>Hooked up via LPC</li>
+          <li>We can buy that MCU!</li>
+        </ul>
+      </div>
+      <footer class="source">source: ifixit.com</footer>
+    </article>
+  </slide>
+
+   <slide>
+  <hgroup>
+  <h2>Chromebook Embedded Controller </h2>
+  <h3>Another one!</h3>
+  </hgroup>
+    <article class="smaller">
+      <div class="columns-2">
+        <img src="images/stm32.png" class="reflect" alt="Description" title="Description" width=100%>
+        <ul>
+          <li>PCB here: Asus C100P (veyron_minnie/veyron_pink)</li>
+          <li>AP: (bottom right) Rockchip RK3288C</li>
+          <li>EC MCU (pink) <b>STM32F071</b> </li>
+          <li>Hooked up via SPI</li>
+          <li>Note sizeof(AP) vs sizeof(EC)</li>
+        </ul>
+      </div>
+      <footer class="source">source: ifixit.com</footer>
+    </article>
+  </slide>
+
+  <slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/fosdem-gear.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Chromium EC</h2>
+      <h3>Let's loook at the firmware<h3>
+    </hgroup>
+  </slide>
+
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Overview</h3>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Firmware of Embedded Controllers</li>
+        <li>License: 3 Clause BSD</li>
+        <li>Currently supported ports to MCU with
+            <ul>
+                <li>ARM Cortex M{0,3,4}</li>
+                <li>AndeStar NDS32</li>
+                <li>Minute-IA (x86)</li>
+            </uL>
+        </li>
+        <li>Kernel Coding style!</li>
+      </ul>
+      <br><br>
+        git: <a href="https://chromium.googlesource.com/chromiumos/platform/ec">
+                https://chromium.googlesource.com/chromiumos/platform/ec</a>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Source organization</h3>
+    </hgroup>
+    <article class="smaller">
+      <ul>
+          <li> board/ - Board specific code </li>
+          <li> chip/ - Chip family specific code, clocks, low level I2C, SPI ... </li>
+          <li> common/ - framework code for I2C API, SPI API, GPIO code, PWM </li>
+          <li> core/ - OS code, scheduler etc </li>
+          <li> driver/ - driver code for sensors etc </li>
+          <li> power/ - power sequencing code </li>
+          <li> include/ </li>
+          <li> utils/ - utils like ectool </li>
+          <li> test/ - unittests</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Configuration / Build</h3>
+    </hgroup>
+    <article>
+      <ul>
+	  <li> Configuration options are defined and documented in include/config.h </li>
+	  <li> Configuration options exist for debug levels, modules, features, etc </li>
+	  <li> Each board has a board.h file in board/&ltboard&gt/board.h</li>
+	  <li> Datastructures get initialized in board/&ltboard&gt/board.c </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Flash organization </h3>
+    </hgroup>
+    <article>
+      <div class="columns-2">
+        <img src="images/ec-flash-layout.png" class="reflect" alt="Description" title="Description" width=100%>
+      <ul>
+        <li> Flash stores two copies of firmware</li>
+        <li> Factory programmed read-only (RO) part </li>
+        <li> Field upgradeable read-write (RW) part </li>
+        <li> Always boot RO, jump to RW if AP requests </li>
+        <li> Use GPIO pin for write-protect (screw)
+      </ul>
+      </div>
+      <footer class="source">source: st.com</footer>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Tasks</h3>
+    </hgroup>
+    <article>
+      <ul>
+        <li> Have individual stacks (250-640 bytes)</li>
+        <li> Interrupt driven task switching </li>
+        <li> Priority based preemption </li>
+        <li> Mutexes </li>
+        <li> Timers </li>
+        <li> Events </li>
+        <li> <b> NO </b> heap (malloc() / free())
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Tasks - ec.tasklist</h3>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="c">
+/**
+ * List of enabled tasks in the priority order
+ *
+ * The first one has the lowest priority.
+ *
+ * For each task, use the macro TASK(n, r, d, s) where :
+ * 'n' in the name of the task
+ * 'r' in the main routine of the task
+ * 'd' in an opaque parameter passed to the routine at startup
+ * 's' is the stack size in bytes; must be a multiple of 8
+ */
+
+#define CONFIG_TASK_LIST \
+	TASK_ALWAYS(HOOKS, hook_task, NULL, LARGER_TASK_STACK_SIZE) \
+	TASK_ALWAYS(CHARGER, charger_task, NULL, LARGER_TASK_STACK_SIZE) \
+	TASK_NOTEST(CHIPSET, chipset_task, NULL, LARGER_TASK_STACK_SIZE) \
+	TASK_ALWAYS(HOSTCMD, host_command_task, NULL, TASK_STACK_SIZE) \
+	TASK_ALWAYS(CONSOLE, console_task, NULL, TASK_STACK_SIZE) \
+	TASK_NOTEST(KEYSCAN, keyboard_scan_task, NULL, TASK_STACK_SIZE)
+      </pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Modules</h3>
+    </hgroup>
+    <article>
+      <ul>
+	  <li> Common stuff that includes state machines is grouped into modules </li>
+	  <li> They are self contained, and often optional compile-time options </li>
+	  <li> Each module will have init function, setup statemachine </li>
+	  <li> Declare hook with initialization priority </li>
+	  <li> Examples: I2C, SPI, ADC, CHIPSET, DMA, GPIO .... </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Hooks</h3>
+    </hgroup>
+    <article class="smaller">
+      <div class="columns-2">
+	<pre class="prettyprint" data-lang="c">
+static void power_lid_change(void)
+{
+	task_wake(TASK_ID_CHIPSET);
+}
+DECLARE_HOOK(HOOK_LID_CHANGE, power_lid_change,
+	     HOOK_PRIO_DEFAULT);
+	</pre>
+	<pre class="prettyprint" data-lang="c">
+hook_notify(HOOK_LID_CHANGE);
+	</pre>
+
+      <ul>
+          <li> Allows to register functions to be run when specific events occur </li>
+          <li> Run in priority order, if multiple callbacks are registered </li>
+          <li> Stuff like suspend, resume, lid open, button press, tick, second </li>
+          <li> Can also call be deferred, e.g. to debounce events </li>
+          <li> Hooks execute in stack of calling task, careful! </li>
+          <li> Handled in the HOOKS task </li>
+      </ul>
+      </div>
+    </article>
+  </slide>
+
+
+  <!--
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Interrupts</h3>
+    </hgroup>
+    <article>
+      <ul>
+      </ul>
+    </article>
+  </slide>
+  --!>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Console</h3>
+    </hgroup>
+    <article>
+      <ul>
+          <li> ccprintf() and similar functions </li>
+          <li> Show selective debug via 'channels' </li>
+          <li> Allows for easy debug of a lot of commands</li>
+          <li> Adding custom commands is fairly simple
+          <li> MCU UART or USB possible </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Console Command Example</h3>
+    </hgroup>
+    <article class="smaller">
+	<pre class="prettyprint" data-lang="c">
+static int cc_pwm_duty(int argc, char *argv)
+{
+	/* parse, act, etc */
+	return EC_RES_SUCCESS;
+}
+
+DECLARE_CONSOLE_COMMAND(pwmduty, cc_pwm_duty,
+		"[channel [<percent> | -1=disable] | [raw <value>]]",
+		"Get/set PWM duty cycles ");
+</pre>
+
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Communication with the AP</h3>
+    </hgroup>
+    <article>
+      <ul>
+        <li> Packet based, i.e. header w/checksum + data </li>
+        <li> Two versions of protocol v2 vs v3 </li>
+	<li> Busses have very different semantics, protocol hides that </li>
+        <li> Some EC's speak both versions !? </li>
+	<!--
+        <li> SPI does not have ability to throttle
+            <ul>
+              <li> simple flow control via start of frame / busy / length</li>
+              <li> keep clocking after AP sent message, to get reply </li>
+              <li> EC will send EC_RES_IN_PROGRESS byte while processing </li>
+              <li> messes with some SPI controllers
+            </ul>
+        </li>
+	--!>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Protocol v2</h3>
+    </hgroup>
+    <article>
+      <ul>
+      <li> older version, send <i>commands</i> as follows
+        <ul>
+	<li> Byte 0: EC_CMD_VERSION + (command version) </li>
+	<li> Byte 1: Command number </li>
+	<li> Byte 2: Length of parameters (N) </li>
+	<li> Byte 3..N+2: Parameters </li>
+	<li> Byte N+3: 8 bit checksum over bytes 0 .. N+2 </li>
+	</ul>
+	</li>
+	<li> with a response like
+	<ul>
+	<li> Byte 0: Result code </li>
+	<li> Byte 1: Length of params (M) </li>
+	<li> Byte 2:M+1: Parameters </li>
+	<li> Byte M+2: checksum </li>
+	</ul>
+	</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Protocol v3</h3>
+    </hgroup>
+    <article class = "smaller">
+    Current version, send <i>packets</i> as follows: <br><br>
+
+<pre class="prettyprint" data-lang="C">
+struct ec_host_request {
+	uint8_t struct_version;
+	uint8_t checksum;
+	uint16_t command;
+	uint8_t command_version;
+	uint8_t reserved;
+	uint16_t data_len;
+} __packed;
+</pre>
+
+On I2C gets wrapped to do v3 structs over v2: <br><br>
+<pre class="prettyprint" data-lang="C">
+struct ec_i2c_host_request {
+	uint8_t command_protocol;	
+	struct ec_host_request;
+} __packed;
+</pre>
+    </article>
+      <footer class="source">source: kernel.org</footer>
+  </slide>
+
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Communication with the AP - Declaring a hostcmd</h3>
+    </hgroup>
+    <article class="smaller">
+<pre class="prettyprint" data-lang="C">
+int temp_sensor_command_get_info(struct host_cmd_handler_args *args)
+{
+	const struct ec_params_temp_sensor_get_info *p = args->params;
+	struct ec_response_temp_sensor_get_info *r = args->response;
+	int id = p->id;
+
+	if (id >= TEMP_SENSOR_COUNT)
+		return EC_RES_ERROR;
+
+	strzcpy(r->sensor_name, temp_sensors[id].name, sizeof(r->sensor_name));
+	r->sensor_type = temp_sensors[id].type;
+
+	args->response_size = sizeof(*r);
+
+	return EC_RES_SUCCESS;
+}
+DECLARE_HOST_COMMAND(EC_CMD_TEMP_SENSOR_GET_INFO,
+		     temp_sensor_command_get_info,
+		     EC_VER_MASK(0));
+</pre>
+    </article>
+  </slide>
+
+
+  <slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/fosdem-gear.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Chromium EC</h2>
+      <h3>In your own design<h3>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>SoC Requirements</h3>
+    </hgroup>
+    <article>
+      Bus Interface: <br>
+      <ul>
+        <li> SPI
+            <ul>
+              <li> Officially recommended, Fast
+              <li> Requires decent SPI controller
+            </ul>
+        </li>
+        <li> I2C
+            <ul>
+              <li> Requires I2C controller that can do repeated start </li>
+              <li> Drawback: Slow </li>
+            </ul>
+        </li>
+        <li> LPC
+          <ul>
+            <li> Drawback: Limited subset of SoCs can do it </li>
+          </ul>
+        </li>
+
+      </ul>
+      GPIO: Power, IRQ, Suspend <br><br>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Picking an MCU</h3>
+    </hgroup>
+    <article>
+      <ul>
+      <li> What do you want the EC to do? </li>
+      <li> Minimal recommended set of peripherals
+      <ul>
+        <li> 1+ SPI, 1+ I2C </li>
+        <li> HW PWM </li>
+        <li> Lots of GPIO </li>
+        <li> DMA channels for SPI/I2C</li>
+        <li> UART </li>
+      </ul>
+      </li>
+      <li> Optional: USB (Console, DFU...), UARTs </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>MCU Eval Board</h3>
+    </hgroup>
+    <article class="smaller">
+      <div class="columns-2">
+        <img src="images/disco.jpg" class="reflect" alt="Description" title="Description" width=40%>
+        <ul>
+            <li> I'm cheap, so ... </li>
+            <li> Discovery-Board STM32F072RB ~10$ </li>
+            <li> MCU: STM32F072RB 
+                <ul>
+                    <li> On-Board SWD debug via OpenOCD </li>
+                    <li> 128KB flash </li>
+                    <li> USB </li>
+                    <li> DMA, I2C, SPI ...</li>
+                    <li> Veyron-Jerry uses a STM32F071VB </li>
+                </ul>
+            </li>
+            <li> Is already a supported target </li>
+        </ul>
+      </div>
+      </ul>
+      <footer class="source">source: st.com</footer>
+    </article>
+  </slide>
+
+  <slide>
+  <hgroup>
+  <h2>Chromium EC</h2>
+  <h3>GPIOs & Pin Muxing</h3>
+  </hgroup>
+  <article>
+      <ul>
+	  <li> Pins are either
+	      <ul>
+		  <li> Inputs / outputs (strap pins, leds, write-protect)</li>
+		  <li> Interrupt sources (external reset, buttons, switches ...) </li>
+		  <li> Assigned to alternate functions (I2C, SPI, timer, pwm ...) </li>
+		  <li> pin assignment and muxing happens in gpio.inc, transformed by build</li>
+	      </ul>
+	  </li>
+  </article>
+  </slide>
+
+  <slide>
+  <hgroup>
+  <h2>Chromium EC</h2>
+  <h3>GPIOs - Inputs / outputs</h3>
+  </hgroup>
+  <article>
+      <ul>
+	  <li> Mostly generic, some EC MCU specific flags</li>
+	  <li> Name, Pin, Flags (i.e. Level on reset, Pull-ups, Open Drain ...) </li>
+	  <li> see include/gpio.h </li>
+      </ul>
+<pre class="prettyprint" data-lang="C">
+GPIO(WP_L,        PIN(B, 4), GPIO_INPUT)
+[...]
+GPIO(BAT_LED_RED, PIN(B, 11), GPIO_OUT_HIGH)
+[...]
+GPIO(EC_INT_L,    PIN(B, 9),  GPIO_OUT_LOW)
+</pre>
+  API calls: gpio_get_level() / gpio_set_level()
+  </article>
+  </slide>
+
+  <slide>
+  <hgroup>
+  <h2>Chromium EC</h2>
+  <h3>GPIOs - Interrupt sources</h3>
+  </hgroup>
+  <article>
+      <ul>
+	  <li> Again, mostly generic
+	  <li> Name, Pin, Flags (i.e. Edge, Pull-ups, Open Drain ...), handler </li>
+	  <li> examples: board/*/gpio.inc </li>
+      </ul>
+<pre class="prettyprint" data-lang="C">
+GPIO_INT(SPI1_NSS,   PIN(A, 4),  GPIO_INT_BOTH, spi_event)
+GPIO_INT(AC_PRESENT, PIN(C, 6),  GPIO_INT_BOTH | GPIO_PULL_UP, extpower_interrupt)
+GPIO_INT(SUSPEND_L,  PIN(C, 7),  GPIO_INT_BOTH, power_signal_interrupt)
+</pre>
+  </article>
+  </slide>
+
+  <slide>
+  <hgroup>
+  <h2>Chromium EC</h2>
+  <h3>GPIOs - Alternate Functions</h3>
+  </hgroup>
+  <article>
+      <ul>
+	  <li> Defined by architecture </li>
+	  <li> PIN_MASK(A,0x00f0) = PA4, PA5, PA6, PA7 </li>
+	  <li> Alternate number 0 (from datasheet) </li>
+	  <li> Module that will deal with it (SPI) </li>
+	  <li> Flags same as before</li>
+      </ul>
+<pre class="prettyprint" data-lang="C">
+ALTERNATE(PIN_MASK(A, 0x00f0), 0, MODULE_SPI,  0)
+ALTERNATE(PIN_MASK(A, 0x0600), 1, MODULE_UART, 0)
+ALTERNATE(PIN_MASK(B, 0x00c0), 1, MODULE_I2C,  0)
+</pre>
+  </article>
+  </slide>
+
+  <slide>
+  <hgroup>
+  <h2>Chromium EC</h2>
+  <h3>GPIOs - Faking it </h3>
+  </hgroup>
+  <article>
+      <ul>
+        <li> Some generic code expects certain signals to be there (WP_L, ...)
+        <li> Makes stuff work, by pretending UNIMPLEMENTED GPIOs exist </li>
+        <li> E.g. use generic LED code, but you have only one LED </li>
+        <li> Flags same as before</li>
+      </ul>
+<pre class="prettyprint" data-lang="C">
+UNIMPLEMENTED(WP_L)
+UNIMPLEMENTED(LED_BAT)
+</pre>
+  </article>
+  </slide>
+
+  <slide>
+  <hgroup>
+  <h2>Chromium EC</h2>
+  <h3>Power sequencing</h3>
+  </hgroup>
+  <article>
+  <ul>
+      <li> Most modern SoCs need certain sequence </li>
+      <li> Usually goes like this
+	<ul>
+	<li> Turn on X volt rail </li>
+	<li> Wait max time Y for power good signal</li>
+	<li> If timeout happened, handle it, otherwise proceed </li>
+	<li> power subfolder contains sequences for common chromebooks
+	    <ul>
+		<li> RK3399, RK3288-C
+		<li> Apollolake, Baytrail, Haswell, Skylake
+		<li> Tegra
+		<li> Mediatek
+	    </ul>
+	  </li>
+      </li>
+  </ul>
+  </ul>
+  </article>
+  </slide>
+
+  <slide>
+  <hgroup>
+  <h2>Chromium EC</h2>
+  <h3>Power sequencing - your SoC</h3>
+  </hgroup>
+  <article>
+      <ul>
+	  <li> Implement statemachine </li>
+	  <li> Use ACPI S/G states G3/S5/S3/S0 ... </li>
+	  <li> Describe what needs to happen to proceed, and how to handle failure </li>
+      </ul>
+<pre class="prettyprint" data-lang="C">
+case POWER_S0:
+	if (!power_has_signals(IN_PGOOD_S3) ||
+	    forcing_shutdown ||
+	    !(power_get_signals() & IN_SUSPEND_DEASSERTED))
+		return POWER_S0S3;
+	[...]
+	if (power_wait_signals_timeout(IN_PGOOD_AP | IN_PGOOD_SYS,
+				       PGOOD_AP_DEBOUNCE_TIMEOUT)
+				       == EC_ERROR_TIMEOUT)
+	return POWER_S0S3;
+</pre>
+  </article>
+  </slide>
+
+  <slide>
+  <hgroup>
+  <h2>Chromium EC</h2>
+  <h3>Interfacing Peripherals</h3>
+  </hgroup>
+  <article>
+      <ul>
+	  <li> I2C (Master) API
+	      <ul>
+		  <li> i2c_readX() / i2c_writeX() ... X = 8,16,32 </li>
+	      </ul>
+	  </li>
+
+	  <li> I2C tunnel
+	  	<ul>
+		    <li> Simulates i2c bus over SPI/I2C/LPC connection </li>
+		    <li> Allows host to access slave devices </li>
+		    <li> Might come in handy </li>
+	  	</ul>
+	  </li>
+
+	  <li> SPI (Master) API
+	      <ul>
+		  <li> spi_transaction() data, txlen, rxdata, rxlen</li>
+		  <li> spi_transaction_async() same, but hand over to DMA </li>
+		  <li> supports (some) SPI flash devices
+	      </ul>
+	  </li>
+
+      </ul>
+  </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Kernel & U-Boot </h3>
+    </hgroup>
+    <article>
+	<ul>
+	    <li> I like to work with upstream stuff </li>
+	    <li> Chromebooks use Linux Kernel, so that works really well</li>
+	    <li> Most use depthcharge instead of u-boot, code gets less flight time</li>
+	    <li> I'm still working on adding software sync to u-boot</li>
+	    <li> I didn't look at adding verified boot </li>
+	</ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Kernel & U-boot - Devicetree (I2C)</h3>
+    </hgroup>
+    <article class="smaller">
+      Instantiation for I2C:
+      <pre class="prettyprint" data-lang="devicetree">
+	&i2c0 {
+		ec: embedded-controller@1e {
+			reg = <0x1e>;
+			compatible = "google,chromium-ec-i2c";
+			interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
+			interrupt-parent = <&gpio0>;
+			wakeup-source;
+		};
+	};
+      </pre>
+      <br><br>
+      Check out Documentation/devicetree/bindings/mfd/cros-ec.txt
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Kernel & U-boot - Devicetree (SPI)</h3>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="devicetree">
+	&spi0 {
+		ec: embedded-controller@0 {
+			reg = <0x0>;
+			compatible = "google,cros-ec-spi";
+			interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
+			interrupt-parent = <&gpio0>;
+			wakeup-source;
+		};
+	};
+      </pre>
+      <br><br>
+      Check out Documentation/devicetree/bindings/mfd/cros-ec.txt
+
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Linux interface </h3>
+    </hgroup>
+    <article>
+	<ul>
+	    <li> Nothing too exciting, MFD device </li>
+	    <li> MFD subdevices include
+		<ul>
+		    <li> I2C tunnel (i2c bus) </li>
+		    <li> PWM channels (pwm) </li>
+		    <li> Battery (power-supply) </li>
+		    <li> Lightbar </li>
+		</ul>
+		<li> Character device allowing for ioctl(2) for ectool / flashrom </li>
+		<li> Code mostly <ul> <li> drivers/mfd/cros_ec_{i2c,spi}.c </li>
+		    <li> drivers/platform/chrome/ </li>
+		    </ul> </li>
+	</ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Linux interface - sysfs</h3>
+    </hgroup>
+    <article class="smaller">
+      <pre class="prettyprint" data-lang="console">
+[mfischer@chromebook]$ tree /sys/class/chromeos/cros_ec
+/sys/class/chromeos/cros_ec
+|-- dev
+|-- device -> ../../../cros-ec-ctl.0.auto
+|-- flashinfo
+|-- lightbar
+|-- power
+|   |-- autosuspend_delay_ms
+|   |-- control
+|   |-- runtime_active_time
+|   |-- runtime_status
+|   `-- runtime_suspended_time
+|-- reboot
+|-- subsystem -> ../../../../../../../../../class/chromeos
+|-- uevent
+|-- vbc
+`-- version
+      </pre>
+
+    </article>
+  </slide>
+
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>U-Boot</h3>
+    </hgroup>
+    <article>
+	<ul>
+	    <li> Nothing too exciting, misc device </li>
+	    <li> Functionality exposed
+		<ul>
+		    <li> I2C tunnel (i2c bus integrated in dm)</li>
+		    <li> Reading / Writing firmware (crosec read / write) </li>
+		    <li> Getting flash information (crosec flashinfo) </li>
+		    <li> Reboot EC into RO / RW (crosec reboot RO / RW)</li>
+		</ul>
+		<li> Code mostly <ul> <li> drivers/misc/cros_ec_{i2c,spi}.c </li>
+			<li> cmd/cros_ec.c </li>
+		    </ul> </li>
+	</ul>
+    </article>
+  </slide>
+
+  <slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/fosdem-gear.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Community & Wrap-up</h2>
+      <h3>Awesome, what bout it?<h3>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Community (Subjective!)</h3>
+    </hgroup>
+    <article>
+    <ul>
+        <li> Mostly Google driven development </li>
+        <li> Roadmap very nebulous </li>
+        <li> Code review via gerrit :( </li>
+        <li> Mailing list very low traffic </li>
+        <li> Very receptive to patches, quick reviews </li>
+    </ul>
+    </article>
+  </slide>
+
+
+  <slide class="thank-you-slide segue nobackground">
+    <aside class="gdbar right"><img src="images/fosdem-gear.png"></aside>
+    <article class="flexbox vleft auto-fadein">
+      <h2>Thank You!</h2>
+      <p>Get in touch</p>
+    </article>
+    <p class="auto-fadein" data-config-contact>
+      <!-- populated from slide_config.json -->
+    </p>
+  </slide>
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<script>
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-XXXXXXXX-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>

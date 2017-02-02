@@ -26,14 +26,8 @@ URL: https://code.google.com/p/io-2012-slides
 
 <slides class="layout-widescreen">
 
-  <slide class="logoslide nobackground">
-    <article class="flexbox vcenter">
-      <span><img src="images/google_developers_logo.png"></span>
-    </article>
-  </slide>
-
   <slide class="title-slide segue nobackground">
-    <aside class="gdbar"><img src="images/google_developers_icon_128.png"></aside>
+    <aside class="gdbar"><img src="images/fosdem-gear.png"></aside>
     <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
     <hgroup class="auto-fadein">
       <h1 data-config-title><!-- populated from slide_config.json --></h1>
@@ -44,21 +38,162 @@ URL: https://code.google.com/p/io-2012-slides
 
   <slide>
     <hgroup>
-      <h2>Slide with Bullets</h2>
+      <h2>$whoami</h2>
+      <h3>Moritz Fischer</h3>
     </hgroup>
     <article>
       <ul>
-        <li>Titles are formatted as Open Sans with bold applied and font size is set at 45</li>
-        <li>Title capitalization is title case
-          <ul>
-            <li>Subtitle capitalization is title case</li>
-          </ul>
-        </li>
-        <li>Subtitle capitalization is title case</li>
-        <li>Titles and subtitles should never have a period at the end</li>
+        <li>Embedded Software Engineer @ National Instruments</li>
+        <li>Work on the USRP </li>
+        <li>Very small team, focus on open-source</li>
+        <li>Try to work upstream first </li>
       </ul>
     </article>
   </slide>
+
+  <slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/fosdem-gear.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Brief Intro to Chromebooks</h2>
+      <h3>Just another laptop?<h3>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <hgroup>
+    <h2>Chromebook</h2>
+    <h3>What's so special?</h3>
+    </hgroup>
+    <article class="smaller">
+      <div class="columns-2">
+        <img src="images/chromebook.jpg" class="reflect" alt="Description" title="Description" width=100%>
+        <ul>
+            <li>x86_64 (Intel), ARMv7 (exynos 5, rk3288c, ...), ARMv8 (rk3399) </li>
+            <li>Linux Kernel (old, but maintained)</li>
+            <li>Userland derived from Gentoo</li>
+            <li>Made to run Google Chrome & Google Apps </li>
+            <li>Very limited local storage </li>
+            <li>Strong focus on security, verified boot</li>
+        </ul>
+      </div>
+
+      <footer class="source">source: lenovo.com</footer>
+    </article>
+  </slide>
+
+  <slide>
+  <hgroup>
+  <h2>Chromebook Embedded Controller </h2>
+  <h3>What's that? </h3>
+  </hgroup>
+    <article class="smaller">
+      <div class="columns-2">
+        <img src="images/smsc.jpg" class="reflect" alt="Description" title="Description" width=100%>
+        <ul>
+          <li>PCB here: Asus C202 (terra/strago)</li>
+          <li>AP: (red) Intel Celeron CPU (Braswell) </li>
+          <li>EC MCU (green) <b>SMSC MEC1322-LZY</b> </li>
+          <li>Hooked up via LPC</li>
+          <li>We can buy that MCU!</li>
+        </ul>
+      </div>
+      <footer class="source">source: ifixit.com</footer>
+    </article>
+  </slide>
+
+   <slide>
+  <hgroup>
+  <h2>Chromebook Embedded Controller </h2>
+  <h3>Another one!</h3>
+  </hgroup>
+    <article class="smaller">
+      <div class="columns-2">
+        <img src="images/stm32.jpg" class="reflect" alt="Description" title="Description" width=100%>
+        <ul>
+          <li>PCB here: Asus C100P (veyron_minnie/veyron_pink)</li>
+          <li>AP: (not visible) Rockchip RK3288C</li>
+          <li>EC MCU (pink) <b>STM32F071</b> </li>
+          <li>Hooked up via SPI</li>
+          <li>We can buy that MCU, too!</li>
+        </ul>
+      </div>
+      <footer class="source">source: ifixit.com</footer>
+    </article>
+  </slide>
+
+  <slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/fosdem-gear.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Chromium EC</h2>
+      <h3>Let's loook at the firmware<h3>
+    </hgroup>
+  </slide>
+
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Overview</h3>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Firmware of Embedded Controllers</li>
+        <li>License: 3 Clause BSD</li>
+        <li>Currently supported ports to MCU with
+            <ul>
+                <li>ARM Cortex M{0,3,4}</li>
+                <li>AndeStar NDS32</li>
+                <li>Minute-IA (x86)</li>
+            </uL>
+        </li>
+        <li>Kernel Coding style!</li>
+      </ul>
+      <br><br>
+        git: <a href="https://chromium.googlesource.com/chromiumos/platform/ec">
+                https://chromium.googlesource.com/chromiumos/platform/ec</a>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Source organization</h3>
+    </hgroup>
+    <article>
+      <ul>
+          <li> board/
+              <ul>
+                  <li> Board specific code </li>
+              </ul>
+          </li>
+          <li> chip/
+              <ul>
+                  <li> Chip family specific code, clocks, low level I2C, SPI ... </li>
+              </ul>
+          </li>
+          <li> common/
+              <ul>
+                  <li> Common framework code for I2C API, SPI API, GPIO code, PWM </li>
+              </ul>
+          </li>
+          <li> core/
+              <ul>
+                  <li> OS code, scheduler etc </li>
+              </ul>
+          </li>
+
+          <li> driver/
+              <ul>
+                  <li> driver code for sensors etc </li>
+              </ul>
+          </li>
+
+          <li> include/ </li>
+          <li> utils/ </li>
+      </ul>
+    </article>
+  </slide>
+
 
   <slide>
     <hgroup>
