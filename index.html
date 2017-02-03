@@ -860,6 +860,27 @@ case POWER_S0:
     </article>
   </slide>
 
+  <slide>
+    <hgroup>
+      <h2>Chromium EC</h2>
+      <h3>Linux interface - ectool</h3>
+    </hgroup>
+    <article>
+	<ul>
+	    <li> Useful tool to test and inspect
+	    <li> Uses characterdev with ioctl(2) to
+		<ul>
+		    <li> GPIO state </li>
+		    <li> Firmware Versions </li>
+		    <li> Reboot the EC </li>
+		    <li> Flash info </li>
+		    <li> Read / write Firmware </li>
+		    <li> Send commands, useful for development </li>
+		    <li> ...
+		</ul>
+	</ul>
+    </article>
+  </slide>
 
   <slide>
     <hgroup>
@@ -882,6 +903,7 @@ case POWER_S0:
 	</ul>
     </article>
   </slide>
+
 
   <slide class="segue dark nobackground">
     <aside class="gdbar"><img src="images/fosdem-gear.png"></aside>
